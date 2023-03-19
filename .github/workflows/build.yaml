@@ -1,0 +1,90 @@
+name: Release
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    permissions:
+      contents: read
+    strategy:
+      matrix:
+        include:
+#          - os: ubuntu-latest
+#            arch: x64
+#            build-group: linux-x64
+#          - os: ubuntu-latest
+#            arch: x64
+#            build-group: linux-arm
+#          - os: ubuntu-latest
+#            arch: x64
+#            build-group: linux-arm64
+#          - os: macos-latest
+#            arch: x64
+#            build-group: darwin-x64+arm64
+          - os: windows-2019
+            arch: x86
+            build-group: win32-x86
+          - os: windows-2019
+            arch: x64
+            build-group: win32-x64
+    runs-on: ${{ matrix.os }}
+    name: Build ${{ matrix.build-group }}
+    env:
+      BUILD_GROUP: ${{ matrix.build-group }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+          architecture: ${{ matrix.arch }}
+      - name: Install
+        run: npm install --ignore-scripts
+      - name: Prebuild
+        run: npm run prebuild-$BUILD_GROUP
+        shell: bash
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.BUILD_GROUP }}
+          path: prebuilds/*
+          retention-days: 1
+  release:
+    needs: build
+    permissions:
+      contents: write
+      packages: write
+    runs-on: ubuntu-latest
+    name: Release
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
+          fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+          registry-url: 'https://registry.npmjs.org'
+          scope: '@launch-deck' # Defaults to the user or organization that owns the workflow file
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: prebuilds
+      - name: Display structure of downloaded files
+        run: ls -R
+        working-directory: prebuilds
+      - run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+      - name: npm version
+        run: npm version patch -m "Bumping version [skip ci]"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+      - run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

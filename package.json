@@ -1,0 +1,27 @@
+{
+    "name": "@launch-deck/process-addon",
+    "description": "Native addon for helping with processes",
+    "version": "1.0.0",
+    "main": "./index",
+    "scripts": {
+        "install": "node-gyp-build",
+        "rebuild": "node-gyp rebuild",
+        "prebuild-win32-x64": "prebuildify -t 14.13.0 -t electron@18.2.0 --napi --strip",
+        "prebuild-win32-x86": "prebuildify -t 14.13.0 -t electron@18.2.0 --napi --strip"
+    },
+    "keywords": [],
+    "author": {
+        "name": "David Hamilton",
+        "email": "nova706@gmail.com"
+    },
+    "dependencies": {
+        "node-addon-api": "^5.0.0",
+        "node-gyp-build": "^4.4.0"
+    },
+    "devDependencies": {
+        "node-gyp": "^9.0.0",
+        "prebuildify": "^5.0.0",
+        "prebuildify-ci": "^1.0.5"
+    },
+    "gypfile": true
+}
