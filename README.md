@@ -1,2 +1,2 @@
-# process-addon-win
+# process-addon
 Native Node module for managing Windows processes
