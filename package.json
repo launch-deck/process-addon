@@ -1,7 +1,7 @@
 {
     "name": "@launch-deck/process-addon",
     "description": "Native addon for helping with processes",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "main": "./index",
     "types": "./index.d.ts",
     "scripts": {
