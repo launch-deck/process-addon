@@ -76,7 +76,7 @@ jobs:
         run: ls -R
         working-directory: artifacts
       - name: Copy prebuilds
-        run: cp artifacts/*/* prebuilds
+        run: cp -r artifacts/*/* prebuilds
       - name: Display structure of prebuilds
         run: ls -R
         working-directory: prebuilds
