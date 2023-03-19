@@ -3,6 +3,7 @@
     "description": "Native addon for helping with processes",
     "version": "1.0.3",
     "main": "./index",
+    "types": "./index.d.ts",
     "scripts": {
         "install": "node-gyp-build",
         "rebuild": "node-gyp rebuild",
