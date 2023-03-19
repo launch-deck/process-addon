@@ -71,8 +71,13 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v3
         with:
-          path: prebuilds
-      - name: Display structure of downloaded files
+          path: artifacts
+      - name: Display structure of artifacts
+        run: ls -R
+        working-directory: artifacts
+      - name: Copy prebuilds
+        run: cp artifacts/*/* prebuilds
+      - name: Display structure of prebuilds
         run: ls -R
         working-directory: prebuilds
       - run: |
